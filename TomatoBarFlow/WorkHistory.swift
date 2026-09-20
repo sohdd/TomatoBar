@@ -83,6 +83,45 @@ struct TBDailyWorkSummary: Equatable {
     var durationMinutes: Int { records.reduce(0) { $0 + $1.durationMinutes } }
 }
 
+struct TBDailySummaryTextFormatter {
+    let titleFormat: String
+    let itemFormat: String
+    let totalFormat: String
+
+    func string(for day: TBLocalDay,
+                summary: TBDailyWorkSummary,
+                formatTime: (Date) -> String) -> String
+    {
+        var sections = [String(format: titleFormat, day.isoDate)]
+
+        for item in summary.contentSummaries {
+            var lines = [String(
+                format: itemFormat,
+                item.content,
+                item.tomatoCount,
+                item.durationMinutes
+            )]
+            lines += summary.records
+                .filter { $0.content == item.content }
+                .map { "  \(formatTime($0.startedAt))–\(formatTime($0.endedAt))" }
+            sections.append(lines.joined(separator: "\n"))
+        }
+
+        sections.append(String(
+            format: totalFormat,
+            summary.tomatoCount,
+            summary.durationMinutes
+        ))
+        return sections.joined(separator: "\n\n")
+    }
+}
+
+private extension TBLocalDay {
+    var isoDate: String {
+        String(format: "%04d-%02d-%02d", year, month, day)
+    }
+}
+
 struct TBWorkHistory {
     private(set) var records: [TBWorkRecord]
 

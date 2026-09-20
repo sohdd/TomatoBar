@@ -139,6 +139,52 @@ final class TBWorkHistoryTests: XCTestCase {
         XCTAssertEqual(summary.records.map(\.content), ["Hour 9", "Hour 11", "Hour 14"])
     }
 
+    func testPlainTextSummaryIncludesDateGroupedRangesAndRecordedTotals() {
+        var history = TBWorkHistory(data: nil, now: date(2026, 9, 20, 8, 0), calendar: calendar)
+        let work = [
+            ("TomatoBar 定制", date(2026, 9, 20, 9, 10), 25),
+            ("TomatoBar 定制", date(2026, 9, 20, 9, 48), 25),
+            ("TomatoBar 定制", date(2026, 9, 20, 10, 30), 25),
+            ("吃饭", date(2026, 9, 20, 12, 5), 25),
+        ]
+        for (content, startedAt, durationMinutes) in work {
+            history.completeWork(
+                content: content,
+                startedAt: startedAt,
+                endedAt: startedAt.addingTimeInterval(TimeInterval(durationMinutes * 60)),
+                durationMinutes: durationMinutes,
+                calendar: calendar
+            )
+        }
+
+        let text = TBDailySummaryTextFormatter(
+            titleFormat: "%@ 工作总结",
+            itemFormat: "%@：%d 个🍅，%d 分钟",
+            totalFormat: "合计：%d 个🍅，%d 分钟"
+        ).string(
+            for: TBLocalDay(year: 2026, month: 9, day: 20),
+            summary: history.summary(for: TBLocalDay(year: 2026, month: 9, day: 20)),
+            formatTime: { date in
+                let components = self.calendar.dateComponents([.hour, .minute], from: date)
+                return String(format: "%02d:%02d", components.hour!, components.minute!)
+            }
+        )
+
+        XCTAssertEqual(text, """
+        2026-09-20 工作总结
+
+        TomatoBar 定制：3 个🍅，75 分钟
+          09:10–09:35
+          09:48–10:13
+          10:30–10:55
+
+        吃饭：1 个🍅，25 分钟
+          12:05–12:30
+
+        合计：4 个🍅，100 分钟
+        """)
+    }
+
     func testUpdatingRecordContentPreservesItsIdentityAndTimingAndRecalculatesSummary() throws {
         let startedAt = date(2026, 9, 20, 9, 0)
         var history = TBWorkHistory(data: nil, now: startedAt, calendar: calendar)

@@ -32,8 +32,15 @@
 "WorkView.uncategorized" = "未分类";
 "WorkView.history.label" = "查看工作记录";
 "DailySummary.title" = "工作记录";
+"DailySummary.title.today" = "今日工作总结";
+"DailySummary.title.yesterday" = "昨日工作总结";
 "DailySummary.today.label" = "今天";
 "DailySummary.yesterday.label" = "昨天";
+"DailySummary.copy.today.label" = "复制今日总结";
+"DailySummary.copy.yesterday.label" = "复制昨日总结";
+"DailySummary.copy.title.format" = "%@ 工作总结";
+"DailySummary.copy.item.format" = "%@：%d 个🍅，%d 分钟";
+"DailySummary.copy.total.format" = "合计：%d 个🍅，%d 分钟";
 "DailySummary.empty.today" = "今天还没有完成番茄";
 "DailySummary.empty.yesterday" = "昨天没有完成番茄";
 "DailySummary.empty.message" = "完成一个工作计时后，记录会显示在这里。";

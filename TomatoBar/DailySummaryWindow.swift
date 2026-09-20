@@ -46,6 +46,24 @@ private enum TBDailySummaryDay: String, CaseIterable, Identifiable {
         }
     }
 
+    var summaryTitle: String {
+        switch self {
+        case .today:
+            return NSLocalizedString("DailySummary.title.today", comment: "Daily summary title for today")
+        case .yesterday:
+            return NSLocalizedString("DailySummary.title.yesterday", comment: "Daily summary title for yesterday")
+        }
+    }
+
+    var copyButtonTitle: String {
+        switch self {
+        case .today:
+            return NSLocalizedString("DailySummary.copy.today.label", comment: "Copy today's summary button")
+        case .yesterday:
+            return NSLocalizedString("DailySummary.copy.yesterday.label", comment: "Copy yesterday's summary button")
+        }
+    }
+
     func localDay(now: Date, calendar: Calendar) -> TBLocalDay {
         let date: Date
         switch self {
@@ -99,6 +117,14 @@ private struct TBDailySummaryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(selectedDay.summaryTitle)
+                    .font(.title2.weight(.semibold))
+                Spacer()
+                Button(selectedDay.copyButtonTitle, action: copySummary)
+                    .disabled(summary.records.isEmpty)
+            }
+
             Picker("", selection: $selectedDay) {
                 ForEach(TBDailySummaryDay.allCases) { day in
                     Text(day.label).tag(day)
@@ -139,6 +165,33 @@ private struct TBDailySummaryView: View {
 
     private var summary: TBDailyWorkSummary {
         store.summary(for: selectedDay.localDay(now: clock.now, calendar: calendar))
+    }
+
+    private var plainTextSummary: String {
+        TBDailySummaryTextFormatter(
+            titleFormat: NSLocalizedString(
+                "DailySummary.copy.title.format",
+                comment: "Date and title at the start of a copied daily summary"
+            ),
+            itemFormat: NSLocalizedString(
+                "DailySummary.copy.item.format",
+                comment: "Work content, tomato count, and minutes in a copied daily summary"
+            ),
+            totalFormat: NSLocalizedString(
+                "DailySummary.copy.total.format",
+                comment: "Total tomato count and minutes in a copied daily summary"
+            )
+        ).string(
+            for: selectedDay.localDay(now: clock.now, calendar: calendar),
+            summary: summary,
+            formatTime: { Self.timeFormatter.string(from: $0) }
+        )
+    }
+
+    private func copySummary() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(plainTextSummary, forType: .string)
     }
 
     private var emptyState: some View {

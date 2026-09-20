@@ -32,8 +32,15 @@
 "WorkView.uncategorized" = "Uncategorized";
 "WorkView.history.label" = "View work records";
 "DailySummary.title" = "Work Records";
+"DailySummary.title.today" = "Today's Work Summary";
+"DailySummary.title.yesterday" = "Yesterday's Work Summary";
 "DailySummary.today.label" = "Today";
 "DailySummary.yesterday.label" = "Yesterday";
+"DailySummary.copy.today.label" = "Copy Today's Summary";
+"DailySummary.copy.yesterday.label" = "Copy Yesterday's Summary";
+"DailySummary.copy.title.format" = "%@ Work Summary";
+"DailySummary.copy.item.format" = "%@: %d tomatoes, %d min";
+"DailySummary.copy.total.format" = "Total: %d tomatoes, %d min";
 "DailySummary.empty.today" = "No tomatoes completed today";
 "DailySummary.empty.yesterday" = "No tomatoes completed yesterday";
 "DailySummary.empty.message" = "Records will appear here after you complete a work interval.";
