@@ -41,3 +41,9 @@
 "DailySummary.summary.total" = "%d tomatoes · %d min";
 "DailySummary.summary.item" = "%d tomatoes · %d min";
 "DailySummary.timeline.title" = "Timeline";
+"DailySummary.timeline.delete.label" = "Delete work record";
+"DailySummary.timeline.delete.help" = "Delete this work record";
+"DailySummary.edit.title" = "Edit Work Record";
+"DailySummary.edit.content.label" = "Work content";
+"DailySummary.edit.cancel.label" = "Cancel";
+"DailySummary.edit.save.label" = "Save";

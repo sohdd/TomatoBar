@@ -93,6 +93,7 @@ private struct TBDailySummaryView: View {
     @ObservedObject var store: TBWorkStore
     @StateObject private var clock = TBDailySummaryClock()
     @State private var selectedDay = TBDailySummaryDay.today
+    @State private var editingRecord: TBWorkRecord?
 
     private let calendar = Calendar.current
 
@@ -122,6 +123,18 @@ private struct TBDailySummaryView: View {
         }
         .padding(24)
         .frame(minWidth: 560, minHeight: 400)
+        .sheet(item: $editingRecord) { record in
+            TBEditWorkRecordView(record: record) { content in
+                store.updateRecordContent(
+                    recordID: record.id,
+                    content: content,
+                    uncategorized: NSLocalizedString(
+                        "WorkView.uncategorized",
+                        comment: "Work content used when the edited value is empty"
+                    )
+                )
+            }
+        }
     }
 
     private var summary: TBDailyWorkSummary {
@@ -187,14 +200,38 @@ private struct TBDailySummaryView: View {
 
             ForEach(summary.records) { record in
                 HStack(spacing: 16) {
-                    Text(timeRange(for: record))
-                        .font(.system(.body, design: .monospaced))
-                        .foregroundColor(.secondary)
-                        .frame(width: 120, alignment: .leading)
-                    Text(record.content)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("1🍅")
-                        .foregroundColor(.secondary)
+                    Button {
+                        editingRecord = record
+                    } label: {
+                        HStack(spacing: 16) {
+                            Text(timeRange(for: record))
+                                .font(.system(.body, design: .monospaced))
+                                .foregroundColor(.secondary)
+                                .frame(width: 120, alignment: .leading)
+                            Text(record.content)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("1🍅")
+                                .foregroundColor(.secondary)
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        store.deleteRecord(recordID: record.id)
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .buttonStyle(.borderless)
+                    .foregroundColor(.secondary)
+                    .help(NSLocalizedString(
+                        "DailySummary.timeline.delete.help",
+                        comment: "Help text for deleting a work record"
+                    ))
+                    .accessibilityLabel(NSLocalizedString(
+                        "DailySummary.timeline.delete.label",
+                        comment: "Accessibility label for deleting a work record"
+                    ))
                 }
                 .padding(.vertical, 6)
 
@@ -212,6 +249,59 @@ private struct TBDailySummaryView: View {
         formatter.dateFormat = "HH:mm"
         return formatter
     }()
+}
+
+private struct TBEditWorkRecordView: View {
+    @Environment(\.presentationMode) private var presentationMode
+    @State private var content: String
+
+    let onSave: (String) -> Void
+
+    init(record: TBWorkRecord, onSave: @escaping (String) -> Void) {
+        _content = State(initialValue: record.content)
+        self.onSave = onSave
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text(NSLocalizedString(
+                "DailySummary.edit.title",
+                comment: "Title for editing a work record"
+            ))
+            .font(.title3.weight(.semibold))
+
+            TextField(
+                NSLocalizedString(
+                    "DailySummary.edit.content.label",
+                    comment: "Label for the work content field"
+                ),
+                text: $content
+            )
+            .textFieldStyle(.roundedBorder)
+
+            HStack {
+                Spacer()
+                Button(NSLocalizedString(
+                    "DailySummary.edit.cancel.label",
+                    comment: "Cancel editing a work record"
+                )) {
+                    presentationMode.wrappedValue.dismiss()
+                }
+                Button(NSLocalizedString(
+                    "DailySummary.edit.save.label",
+                    comment: "Save edits to a work record"
+                ), action: save)
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(24)
+        .frame(width: 380)
+    }
+
+    private func save() {
+        onSave(content)
+        presentationMode.wrappedValue.dismiss()
+    }
 }
 
 private struct TBWorkSummaryBar: View {

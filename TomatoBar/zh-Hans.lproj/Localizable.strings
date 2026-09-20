@@ -41,3 +41,9 @@
 "DailySummary.summary.total" = "%d 个🍅 · %d 分钟";
 "DailySummary.summary.item" = "%d 个🍅 · %d 分钟";
 "DailySummary.timeline.title" = "时间线";
+"DailySummary.timeline.delete.label" = "删除工作记录";
+"DailySummary.timeline.delete.help" = "删除这条工作记录";
+"DailySummary.edit.title" = "修改工作记录";
+"DailySummary.edit.content.label" = "工作内容";
+"DailySummary.edit.cancel.label" = "取消";
+"DailySummary.edit.save.label" = "保存";

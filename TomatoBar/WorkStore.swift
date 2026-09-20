@@ -52,6 +52,25 @@ final class TBWorkStore: ObservableObject {
         history.summary(for: day)
     }
 
+    func updateRecordContent(recordID: UUID, content: String, uncategorized: String) {
+        let lockedContent = TBWorkContent.lock(content, uncategorized: uncategorized)
+        guard history.records.contains(where: { $0.id == recordID }) else {
+            return
+        }
+        objectWillChange.send()
+        history.updateContent(of: recordID, to: lockedContent.recorded)
+        persist()
+    }
+
+    func deleteRecord(recordID: UUID) {
+        guard history.records.contains(where: { $0.id == recordID }) else {
+            return
+        }
+        objectWillChange.send()
+        history.deleteRecord(withID: recordID)
+        persist()
+    }
+
     private func persist() {
         guard let data = try? history.encoded() else {
             return

@@ -139,6 +139,76 @@ final class TBWorkHistoryTests: XCTestCase {
         XCTAssertEqual(summary.records.map(\.content), ["Hour 9", "Hour 11", "Hour 14"])
     }
 
+    func testUpdatingRecordContentPreservesItsIdentityAndTimingAndRecalculatesSummary() throws {
+        let startedAt = date(2026, 9, 20, 9, 0)
+        var history = TBWorkHistory(data: nil, now: startedAt, calendar: calendar)
+        let record = history.completeWork(
+            content: "Planning",
+            startedAt: startedAt,
+            endedAt: startedAt.addingTimeInterval(25 * 60),
+            durationMinutes: 25,
+            calendar: calendar
+        )
+
+        XCTAssertTrue(history.updateContent(of: record.id, to: "Coding"))
+
+        let updatedRecord = try XCTUnwrap(history.records.first)
+        XCTAssertEqual(updatedRecord.id, record.id)
+        XCTAssertEqual(updatedRecord.content, "Coding")
+        XCTAssertEqual(updatedRecord.startedAt, record.startedAt)
+        XCTAssertEqual(updatedRecord.endedAt, record.endedAt)
+        XCTAssertEqual(updatedRecord.durationMinutes, record.durationMinutes)
+        XCTAssertEqual(updatedRecord.startDay, record.startDay)
+        XCTAssertEqual(
+            history.summary(for: record.startDay).contentSummaries,
+            [TBWorkContentSummary(content: "Coding", tomatoCount: 1, durationMinutes: 25)]
+        )
+
+        let reloaded = TBWorkHistory(
+            data: try history.encoded(),
+            now: startedAt,
+            calendar: calendar
+        )
+        XCTAssertEqual(reloaded.records, [updatedRecord])
+    }
+
+    func testDeletingRecordRemovesOnlyThatTomatoAndRecalculatesSummary() throws {
+        let startedAt = date(2026, 9, 20, 9, 0)
+        var history = TBWorkHistory(data: nil, now: startedAt, calendar: calendar)
+        let deletedRecord = history.completeWork(
+            content: "Coding",
+            startedAt: startedAt,
+            endedAt: startedAt.addingTimeInterval(25 * 60),
+            durationMinutes: 25,
+            calendar: calendar
+        )
+        let retainedRecord = history.completeWork(
+            content: "Coding",
+            startedAt: startedAt.addingTimeInterval(30 * 60),
+            endedAt: startedAt.addingTimeInterval(70 * 60),
+            durationMinutes: 40,
+            calendar: calendar
+        )
+
+        XCTAssertTrue(history.deleteRecord(withID: deletedRecord.id))
+
+        let summary = history.summary(for: deletedRecord.startDay)
+        XCTAssertEqual(summary.records, [retainedRecord])
+        XCTAssertEqual(summary.tomatoCount, 1)
+        XCTAssertEqual(summary.durationMinutes, 40)
+        XCTAssertEqual(
+            summary.contentSummaries,
+            [TBWorkContentSummary(content: "Coding", tomatoCount: 1, durationMinutes: 40)]
+        )
+
+        let reloaded = TBWorkHistory(
+            data: try history.encoded(),
+            now: startedAt,
+            calendar: calendar
+        )
+        XCTAssertEqual(reloaded.records, [retainedRecord])
+    }
+
     private func date(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int) -> Date {
         calendar.date(from: DateComponents(
             year: year,

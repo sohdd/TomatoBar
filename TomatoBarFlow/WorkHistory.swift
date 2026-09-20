@@ -112,6 +112,32 @@ struct TBWorkHistory {
         return record
     }
 
+    @discardableResult
+    mutating func updateContent(of recordID: UUID, to content: String) -> Bool {
+        guard let index = records.firstIndex(where: { $0.id == recordID }) else {
+            return false
+        }
+        let record = records[index]
+        records[index] = TBWorkRecord(
+            id: record.id,
+            content: content,
+            startedAt: record.startedAt,
+            endedAt: record.endedAt,
+            durationMinutes: record.durationMinutes,
+            startDay: record.startDay
+        )
+        return true
+    }
+
+    @discardableResult
+    mutating func deleteRecord(withID recordID: UUID) -> Bool {
+        guard let index = records.firstIndex(where: { $0.id == recordID }) else {
+            return false
+        }
+        records.remove(at: index)
+        return true
+    }
+
     func encoded() throws -> Data {
         try JSONEncoder().encode(records)
     }

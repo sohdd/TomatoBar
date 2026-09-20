@@ -37,3 +37,9 @@
 "DailySummary.summary.total" = "토마토 %d개 · %d분";
 "DailySummary.summary.item" = "토마토 %d개 · %d분";
 "DailySummary.timeline.title" = "타임라인";
+"DailySummary.timeline.delete.label" = "작업 기록 삭제";
+"DailySummary.timeline.delete.help" = "이 작업 기록 삭제";
+"DailySummary.edit.title" = "작업 기록 편집";
+"DailySummary.edit.content.label" = "작업 내용";
+"DailySummary.edit.cancel.label" = "취소";
+"DailySummary.edit.save.label" = "저장";
