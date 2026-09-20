@@ -28,7 +28,6 @@
 "TBTimer.onRestFinish.title" = "Break is over";
 "TBTimer.onRestFinish.body" = "Keep up the good work!";
 "WorkView.content.placeholder" = "What are you working on?";
-"WorkView.recent.label" = "Recent";
 "WorkView.uncategorized" = "Uncategorized";
 "WorkView.history.label" = "View work records";
 "DailySummary.title" = "Work Records";

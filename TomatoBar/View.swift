@@ -100,25 +100,6 @@ private struct WorkView: View {
                 text: $timer.currentWorkContent
             )
 
-            if !store.recentContents.isEmpty {
-                Text(NSLocalizedString("WorkView.recent.label", comment: "Recent work content label"))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 4) {
-                        ForEach(store.recentContents, id: \.self) { content in
-                            Button(content) {
-                                timer.currentWorkContent = content
-                            }
-                            .buttonStyle(.plain)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                }
-                .frame(maxHeight: 92)
-            }
-
             Button {
                 TBStatusItem.shared.showDailySummary(store: store)
             } label: {
