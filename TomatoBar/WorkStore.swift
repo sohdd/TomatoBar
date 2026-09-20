@@ -54,20 +54,24 @@ final class TBWorkStore: ObservableObject {
 
     func updateRecordContent(recordID: UUID, content: String, uncategorized: String) {
         let lockedContent = TBWorkContent.lock(content, uncategorized: uncategorized)
-        guard history.records.contains(where: { $0.id == recordID }) else {
-            return
+        applyHistoryChange { history in
+            history.updateContent(of: recordID, to: lockedContent.recorded)
         }
-        objectWillChange.send()
-        history.updateContent(of: recordID, to: lockedContent.recorded)
-        persist()
     }
 
     func deleteRecord(recordID: UUID) {
-        guard history.records.contains(where: { $0.id == recordID }) else {
+        applyHistoryChange { history in
+            history.deleteRecord(withID: recordID)
+        }
+    }
+
+    private func applyHistoryChange(_ change: (inout TBWorkHistory) -> Bool) {
+        var updatedHistory = history
+        guard change(&updatedHistory) else {
             return
         }
         objectWillChange.send()
-        history.deleteRecord(withID: recordID)
+        history = updatedHistory
         persist()
     }
 
