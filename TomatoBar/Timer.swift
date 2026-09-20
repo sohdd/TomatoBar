@@ -169,7 +169,7 @@ class TBTimer: ObservableObject {
     private func transition(_ event: TBTimerEvent) {
         guard let transition = flow.handle(event,
                                            workIntervalsInSet: workIntervalsInSet,
-                                           autoStartBreak: autoStartBreak) else {
+                                           breakStartMode: autoStartBreak ? .automatic : .manual) else {
             return
         }
 

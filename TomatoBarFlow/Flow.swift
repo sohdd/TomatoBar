@@ -3,6 +3,11 @@ enum TBBreakKind: String, Equatable {
     case long
 }
 
+enum TBBreakStartMode: Equatable {
+    case automatic
+    case manual
+}
+
 enum TBTimerState: Equatable {
     case waitingForWork
     case working
@@ -36,7 +41,7 @@ struct TBTimerFlow {
 
     mutating func handle(_ event: TBTimerEvent,
                          workIntervalsInSet: Int,
-                         autoStartBreak: Bool) -> TBTimerTransition?
+                         breakStartMode: TBBreakStartMode) -> TBTimerTransition?
     {
         let nextState: TBTimerState
 
@@ -55,7 +60,7 @@ struct TBTimerFlow {
             } else {
                 breakKind = .short
             }
-            nextState = autoStartBreak ? .onBreak(breakKind) : .waitingForBreak(breakKind)
+            nextState = breakStartMode == .automatic ? .onBreak(breakKind) : .waitingForBreak(breakKind)
         case let (.waitingForBreak(breakKind), .startBreak):
             nextState = .onBreak(breakKind)
         case (.waitingForBreak, .skipBreak), (.onBreak, .skipBreak), (.onBreak, .breakFinished):
