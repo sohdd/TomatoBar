@@ -8,13 +8,19 @@ class TBTimer: ObservableObject {
     @AppStorage("shortRestIntervalLength") var shortRestIntervalLength = 5
     @AppStorage("longRestIntervalLength") var longRestIntervalLength = 15
     @AppStorage("workIntervalsInSet") var workIntervalsInSet = 4
+    @AppStorage("currentWorkContent") var currentWorkContent = ""
     // This preference is "hidden"
     @AppStorage("overrunTimeLimit") var overrunTimeLimit = -60.0
 
     private var flow = TBTimerFlow()
     public let player = TBPlayer()
     private var notificationCenter = TBNotificationCenter()
+    let workStore = TBWorkStore()
     private var finishTime: Date?
+    private var workStartedAt: Date?
+    private var lockedWorkContent: String?
+    private var lockedWorkDurationMinutes: Int?
+    private var workStartCalendar: Calendar?
     private var timerFormatter = DateComponentsFormatter()
     @Published private(set) var state: TBTimerState = .waitingForWork
     @Published var timeLeftString: String = ""
@@ -200,6 +206,16 @@ class TBTimer: ObservableObject {
     }
 
     private func onWorkStart() {
+        let workContent = TBWorkContent.lock(
+            currentWorkContent,
+            uncategorized: NSLocalizedString("WorkView.uncategorized", comment: "Uncategorized work content")
+        )
+        currentWorkContent = workContent.current
+        lockedWorkContent = workContent.recorded
+        workStartedAt = Date()
+        lockedWorkDurationMinutes = workIntervalLength
+        workStartCalendar = .current
+
         TBStatusItem.shared.setIcon(name: .work)
         player.playWindup()
         player.startTicking()
@@ -207,12 +223,30 @@ class TBTimer: ObservableObject {
     }
 
     private func onWorkFinish() {
+        if let content = lockedWorkContent,
+           let startedAt = workStartedAt,
+           let endedAt = finishTime,
+           let durationMinutes = lockedWorkDurationMinutes,
+           let calendar = workStartCalendar
+        {
+            workStore.completeWork(
+                content: content,
+                startedAt: startedAt,
+                endedAt: endedAt,
+                durationMinutes: durationMinutes,
+                calendar: calendar
+            )
+        }
         player.playDing()
     }
 
     private func onWorkEnd() {
         player.stopTicking()
         stopTimer()
+        lockedWorkContent = nil
+        workStartedAt = nil
+        lockedWorkDurationMinutes = nil
+        workStartCalendar = nil
     }
 
     private func onWaitingForBreak(_ breakKind: TBBreakKind) {

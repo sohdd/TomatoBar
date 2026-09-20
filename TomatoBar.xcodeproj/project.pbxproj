@@ -12,6 +12,8 @@
 		8A21B79027EE31A30009E5DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A21B78F27EE31A30009E5DB /* Assets.xcassets */; };
 		8A7403A027FA19BB00E7F90B /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 8A74039F27FA19BB00E7F90B /* LaunchAtLogin */; };
 		D00100010000000000000001 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100020000000000000001 /* Flow.swift */; };
+		D00200010000000000000001 /* WorkHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00200020000000000000001 /* WorkHistory.swift */; };
+		D00200030000000000000001 /* WorkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00200040000000000000001 /* WorkStore.swift */; };
 		8A9F701927EE3DAF0012A1EC /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F701827EE3DAF0012A1EC /* Timer.swift */; };
 		8A9F701F27EE536D0012A1EC /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F701E27EE536D0012A1EC /* Player.swift */; };
 		8AA5434A2930F008002A47FC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8AA54347293094AB002A47FC /* Localizable.strings */; };
@@ -27,6 +29,8 @@
 		8A21B78F27EE31A30009E5DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A21B79427EE31A30009E5DB /* TomatoBar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TomatoBar.entitlements; sourceTree = "<group>"; };
 		D00100020000000000000001 /* Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Flow.swift; path = ../TomatoBarFlow/Flow.swift; sourceTree = "<group>"; };
+		D00200020000000000000001 /* WorkHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkHistory.swift; path = ../TomatoBarFlow/WorkHistory.swift; sourceTree = "<group>"; };
+		D00200040000000000000001 /* WorkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkStore.swift; sourceTree = "<group>"; };
 		8A9F701827EE3DAF0012A1EC /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		8A9F701E27EE536D0012A1EC /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		8AA54346293094AB002A47FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -73,6 +77,8 @@
 				8AEE49AE2AA75A5E00243D2F /* Log.swift */,
 				8A21B78D27EE31A20009E5DB /* View.swift */,
 				D00100020000000000000001 /* Flow.swift */,
+				D00200020000000000000001 /* WorkHistory.swift */,
+				D00200040000000000000001 /* WorkStore.swift */,
 				8A9F701827EE3DAF0012A1EC /* Timer.swift */,
 				8A9F701E27EE536D0012A1EC /* Player.swift */,
 				8AA5B3F12812A74600BE1A6C /* Notifications.swift */,
@@ -200,6 +206,8 @@
 				8A21B78C27EE31A20009E5DB /* App.swift in Sources */,
 				8AA5B3F22812A74600BE1A6C /* Notifications.swift in Sources */,
 				D00100010000000000000001 /* Flow.swift in Sources */,
+				D00200010000000000000001 /* WorkHistory.swift in Sources */,
+				D00200030000000000000001 /* WorkStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

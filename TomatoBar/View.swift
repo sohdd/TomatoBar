@@ -89,6 +89,42 @@ private struct SettingsView: View {
     }
 }
 
+private struct WorkView: View {
+    @EnvironmentObject var timer: TBTimer
+    @ObservedObject var store: TBWorkStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField(
+                NSLocalizedString("WorkView.content.placeholder", comment: "Current work content placeholder"),
+                text: $timer.currentWorkContent
+            )
+
+            if !store.recentContents.isEmpty {
+                Text(NSLocalizedString("WorkView.recent.label", comment: "Recent work content label"))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(store.recentContents, id: \.self) { content in
+                            Button(content) {
+                                timer.currentWorkContent = content
+                            }
+                            .buttonStyle(.plain)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                }
+                .frame(maxHeight: 92)
+            }
+
+            Spacer().frame(minHeight: 0)
+        }
+        .padding(4)
+    }
+}
+
 private struct VolumeSlider: View {
     @Binding var volume: Double
 
@@ -126,7 +162,7 @@ private struct SoundsView: View {
 }
 
 private enum ChildView {
-    case intervals, settings, sounds
+    case intervals, work, settings, sounds
 }
 
 struct TBPopoverView: View {
@@ -164,6 +200,8 @@ struct TBPopoverView: View {
             Picker("", selection: $activeChildView) {
                 Text(NSLocalizedString("TBPopoverView.intervals.label",
                                        comment: "Intervals label")).tag(ChildView.intervals)
+                Text(NSLocalizedString("TBPopoverView.work.label",
+                                       comment: "Work label")).tag(ChildView.work)
                 Text(NSLocalizedString("TBPopoverView.settings.label",
                                        comment: "Settings label")).tag(ChildView.settings)
                 Text(NSLocalizedString("TBPopoverView.sounds.label",
@@ -177,6 +215,8 @@ struct TBPopoverView: View {
                 switch activeChildView {
                 case .intervals:
                     IntervalsView().environmentObject(timer)
+                case .work:
+                    WorkView(store: timer.workStore).environmentObject(timer)
                 case .settings:
                     SettingsView().environmentObject(timer)
                 case .sounds:
