@@ -6,7 +6,7 @@
 "IntervalsView.workIntervalsInSet.label" = "Work intervals in a set:";
 "IntervalsView.workIntervalsInSet.help" = "Number of working intervals in the set, after which a lengthy break taken";
 "SettingsView.shortcut.label" = "Shortcut";
-"SettingsView.stopAfterBreak.label" = "Stop after break";
+"SettingsView.autoStartBreak.label" = "Automatically start break after work";
 "SettingsView.showTimerInMenuBar.label" = "Show timer in menu bar";
 "SettingsView.launchAtLogin.label" = "Launch at login";
 "SoundsView.isWindupEnabled.label" = "Windup";
@@ -22,6 +22,7 @@
 "TBTimer.onRestStart.title" = "Time's up";
 "TBTimer.onRestStart.short.body" = "It's time for a short break!";
 "TBTimer.onRestStart.long.body" = "It's time for a long break!";
-"TBTimer.onRestStart.skip.title" = "Skip";
+"TBTimer.startBreak.label" = "Start break";
+"TBTimer.skipBreak.label" = "Skip break";
 "TBTimer.onRestFinish.title" = "Break is over";
 "TBTimer.onRestFinish.body" = "Keep up the good work!";

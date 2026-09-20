@@ -2,11 +2,11 @@ import UserNotifications
 
 enum TBNotification {
     enum Category: String {
-        case restStarted, restFinished
+        case breakReady, breakStarted, breakFinished
     }
 
     enum Action: String {
-        case skipRest
+        case startBreak, skipBreak
     }
 }
 
@@ -29,25 +29,36 @@ class TBNotificationCenter: NSObject, UNUserNotificationCenterDelegate {
 
         center.delegate = self
 
-        let actionSkipRest = UNNotificationAction(
-            identifier: TBNotification.Action.skipRest.rawValue,
-            title: NSLocalizedString("TBTimer.onRestStart.skip.title", comment: "Skip"),
+        let actionStartBreak = UNNotificationAction(
+            identifier: TBNotification.Action.startBreak.rawValue,
+            title: NSLocalizedString("TBTimer.startBreak.label", comment: "Start break"),
             options: []
         )
-        let restStartedCategory = UNNotificationCategory(
-            identifier: TBNotification.Category.restStarted.rawValue,
-            actions: [actionSkipRest],
+        let actionSkipBreak = UNNotificationAction(
+            identifier: TBNotification.Action.skipBreak.rawValue,
+            title: NSLocalizedString("TBTimer.skipBreak.label", comment: "Skip break"),
+            options: []
+        )
+        let breakReadyCategory = UNNotificationCategory(
+            identifier: TBNotification.Category.breakReady.rawValue,
+            actions: [actionStartBreak, actionSkipBreak],
             intentIdentifiers: []
         )
-        let restFinishedCategory = UNNotificationCategory(
-            identifier: TBNotification.Category.restFinished.rawValue,
+        let breakStartedCategory = UNNotificationCategory(
+            identifier: TBNotification.Category.breakStarted.rawValue,
+            actions: [actionSkipBreak],
+            intentIdentifiers: []
+        )
+        let breakFinishedCategory = UNNotificationCategory(
+            identifier: TBNotification.Category.breakFinished.rawValue,
             actions: [],
             intentIdentifiers: []
         )
 
         center.setNotificationCategories([
-            restStartedCategory,
-            restFinishedCategory,
+            breakReadyCategory,
+            breakStartedCategory,
+            breakFinishedCategory,
         ])
     }
 
@@ -57,12 +68,16 @@ class TBNotificationCenter: NSObject, UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
-                                withCompletionHandler _: @escaping () -> Void)
+                                withCompletionHandler completionHandler: @escaping () -> Void)
     {
-        if handler != nil {
-            if let action = TBNotification.Action(rawValue: response.actionIdentifier) {
-                handler!(action)
-            }
+        guard let action = TBNotification.Action(rawValue: response.actionIdentifier),
+              let handler = handler else {
+            completionHandler()
+            return
+        }
+        DispatchQueue.main.async {
+            handler(action)
+            completionHandler()
         }
     }
 

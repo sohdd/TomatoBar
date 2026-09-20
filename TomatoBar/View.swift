@@ -65,9 +65,9 @@ private struct SettingsView: View {
                                        comment: "Shortcut label"))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            Toggle(isOn: $timer.stopAfterBreak) {
-                Text(NSLocalizedString("SettingsView.stopAfterBreak.label",
-                                       comment: "Stop after break label"))
+            Toggle(isOn: $timer.autoStartBreak) {
+                Text(NSLocalizedString("SettingsView.autoStartBreak.label",
+                                       comment: "Automatically start break after work label"))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }.toggleStyle(.switch)
             Toggle(isOn: $timer.showTimerInMenuBar) {
@@ -136,30 +136,30 @@ struct TBPopoverView: View {
 
     private var startLabel = NSLocalizedString("TBPopoverView.start.label", comment: "Start label")
     private var stopLabel = NSLocalizedString("TBPopoverView.stop.label", comment: "Stop label")
+    private var startBreakLabel = NSLocalizedString("TBTimer.startBreak.label", comment: "Start break")
+    private var skipBreakLabel = NSLocalizedString("TBTimer.skipBreak.label", comment: "Skip break")
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Button {
-                timer.startStop()
-                TBStatusItem.shared.closePopover(nil)
-            } label: {
-                Text(timer.timer != nil ?
-                     (buttonHovered ? stopLabel : timer.timeLeftString) :
-                        startLabel)
-                    /*
-                      When appearance is set to "Dark" and accent color is set to "Graphite"
-                      "defaultAction" button label's color is set to the same color as the
-                      button, making the button look blank. #24
-                     */
-                    .foregroundColor(Color.white)
-                    .font(.system(.body).monospacedDigit())
-                    .frame(maxWidth: .infinity)
+            if case .waitingForBreak = timer.state {
+                HStack {
+                    timerButton(label: startBreakLabel) {
+                        timer.startBreak()
+                    }
+                    .keyboardShortcut(.defaultAction)
+                    timerButton(label: skipBreakLabel) {
+                        timer.skipBreak()
+                    }
+                }
+            } else {
+                timerButton(label: primaryButtonLabel) {
+                    timer.startStop()
+                }
+                .keyboardShortcut(.defaultAction)
+                .onHover { over in
+                    buttonHovered = over
+                }
             }
-            .onHover { over in
-                buttonHovered = over
-            }
-            .controlSize(.large)
-            .keyboardShortcut(.defaultAction)
 
             Picker("", selection: $activeChildView) {
                 Text(NSLocalizedString("TBPopoverView.intervals.label",
@@ -225,6 +225,37 @@ struct TBPopoverView: View {
             /* Use values from GeometryReader */
 //            .frame(width: 240, height: 276)
             .padding(12)
+    }
+
+    private var primaryButtonLabel: String {
+        switch timer.state {
+        case .waitingForWork:
+            return startLabel
+        case .working:
+            return buttonHovered ? stopLabel : timer.timeLeftString
+        case .waitingForBreak:
+            return startBreakLabel
+        case .onBreak:
+            return buttonHovered ? skipBreakLabel : timer.timeLeftString
+        }
+    }
+
+    private func timerButton(label: String, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+            TBStatusItem.shared.closePopover(nil)
+        } label: {
+            Text(label)
+                /*
+                  When appearance is set to "Dark" and accent color is set to "Graphite"
+                  "defaultAction" button label's color is set to the same color as the
+                  button, making the button look blank. #24
+                 */
+                .foregroundColor(Color.white)
+                .font(.system(.body).monospacedDigit())
+                .frame(maxWidth: .infinity)
+        }
+        .controlSize(.large)
     }
 }
 
