@@ -14,6 +14,7 @@
 		D00100010000000000000001 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00100020000000000000001 /* Flow.swift */; };
 		D00200010000000000000001 /* WorkHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00200020000000000000001 /* WorkHistory.swift */; };
 		D00200030000000000000001 /* WorkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00200040000000000000001 /* WorkStore.swift */; };
+		D00300010000000000000001 /* DailySummaryWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00300020000000000000001 /* DailySummaryWindow.swift */; };
 		8A9F701927EE3DAF0012A1EC /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F701827EE3DAF0012A1EC /* Timer.swift */; };
 		8A9F701F27EE536D0012A1EC /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9F701E27EE536D0012A1EC /* Player.swift */; };
 		8AA5434A2930F008002A47FC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8AA54347293094AB002A47FC /* Localizable.strings */; };
@@ -31,6 +32,7 @@
 		D00100020000000000000001 /* Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Flow.swift; path = ../TomatoBarFlow/Flow.swift; sourceTree = "<group>"; };
 		D00200020000000000000001 /* WorkHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkHistory.swift; path = ../TomatoBarFlow/WorkHistory.swift; sourceTree = "<group>"; };
 		D00200040000000000000001 /* WorkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkStore.swift; sourceTree = "<group>"; };
+		D00300020000000000000001 /* DailySummaryWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySummaryWindow.swift; sourceTree = "<group>"; };
 		8A9F701827EE3DAF0012A1EC /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		8A9F701E27EE536D0012A1EC /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		8AA54346293094AB002A47FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				D00100020000000000000001 /* Flow.swift */,
 				D00200020000000000000001 /* WorkHistory.swift */,
 				D00200040000000000000001 /* WorkStore.swift */,
+				D00300020000000000000001 /* DailySummaryWindow.swift */,
 				8A9F701827EE3DAF0012A1EC /* Timer.swift */,
 				8A9F701E27EE536D0012A1EC /* Player.swift */,
 				8AA5B3F12812A74600BE1A6C /* Notifications.swift */,
@@ -208,6 +211,7 @@
 				D00100010000000000000001 /* Flow.swift in Sources */,
 				D00200010000000000000001 /* WorkHistory.swift in Sources */,
 				D00200030000000000000001 /* WorkStore.swift in Sources */,
+				D00300010000000000000001 /* DailySummaryWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

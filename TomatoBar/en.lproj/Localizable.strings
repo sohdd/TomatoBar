@@ -30,3 +30,14 @@
 "WorkView.content.placeholder" = "What are you working on?";
 "WorkView.recent.label" = "Recent";
 "WorkView.uncategorized" = "Uncategorized";
+"WorkView.history.label" = "View work records";
+"DailySummary.title" = "Work Records";
+"DailySummary.today.label" = "Today";
+"DailySummary.yesterday.label" = "Yesterday";
+"DailySummary.empty.today" = "No tomatoes completed today";
+"DailySummary.empty.yesterday" = "No tomatoes completed yesterday";
+"DailySummary.empty.message" = "Records will appear here after you complete a work interval.";
+"DailySummary.summary.title" = "Summary";
+"DailySummary.summary.total" = "%d tomatoes · %d min";
+"DailySummary.summary.item" = "%d tomatoes · %d min";
+"DailySummary.timeline.title" = "Timeline";

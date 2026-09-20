@@ -93,6 +93,52 @@ final class TBWorkHistoryTests: XCTestCase {
         XCTAssertEqual(recent.contents, ["Email", "Planning", "Old project"])
     }
 
+    func testDailySummaryGroupsWorkByStartDayAndUsesRecordedDurations() {
+        var history = TBWorkHistory(data: nil, now: date(2026, 9, 20, 8, 0), calendar: calendar)
+        let work = [
+            ("TomatoBar 定制", date(2026, 9, 20, 9, 10), 25),
+            ("吃饭", date(2026, 9, 20, 12, 5), 25),
+            ("TomatoBar 定制", date(2026, 9, 20, 23, 50), 40),
+            ("TomatoBar 定制", date(2026, 9, 21, 9, 0), 25),
+        ]
+        for (content, startedAt, durationMinutes) in work {
+            history.completeWork(
+                content: content,
+                startedAt: startedAt,
+                endedAt: startedAt.addingTimeInterval(TimeInterval(durationMinutes * 60)),
+                durationMinutes: durationMinutes,
+                calendar: calendar
+            )
+        }
+
+        let summary = history.summary(for: TBLocalDay(year: 2026, month: 9, day: 20))
+
+        XCTAssertEqual(summary.contentSummaries, [
+            TBWorkContentSummary(content: "TomatoBar 定制", tomatoCount: 2, durationMinutes: 65),
+            TBWorkContentSummary(content: "吃饭", tomatoCount: 1, durationMinutes: 25),
+        ])
+        XCTAssertEqual(summary.tomatoCount, 3)
+        XCTAssertEqual(summary.durationMinutes, 90)
+    }
+
+    func testDailySummaryOrdersTimelineByStartTime() {
+        var history = TBWorkHistory(data: nil, now: date(2026, 9, 20, 8, 0), calendar: calendar)
+        for hour in [14, 9, 11] {
+            let startedAt = date(2026, 9, 20, hour, 0)
+            history.completeWork(
+                content: "Hour \(hour)",
+                startedAt: startedAt,
+                endedAt: startedAt.addingTimeInterval(25 * 60),
+                durationMinutes: 25,
+                calendar: calendar
+            )
+        }
+
+        let summary = history.summary(for: TBLocalDay(year: 2026, month: 9, day: 20))
+
+        XCTAssertEqual(summary.records.map(\.content), ["Hour 9", "Hour 11", "Hour 14"])
+    }
+
     private func date(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int) -> Date {
         calendar.date(from: DateComponents(
             year: year,

@@ -48,6 +48,10 @@ final class TBWorkStore: ObservableObject {
         refreshRecentContents()
     }
 
+    func summary(for day: TBLocalDay) -> TBDailyWorkSummary {
+        history.summary(for: day)
+    }
+
     private func persist() {
         guard let data = try? history.encoded() else {
             return

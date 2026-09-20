@@ -26,3 +26,14 @@
 "TBTimer.skipBreak.label" = "휴식 건너뛰기";
 "TBTimer.onRestFinish.title" = "휴식 시간 종료";
 "TBTimer.onRestFinish.body" = "다시 작업을 시작하세요!";
+"WorkView.history.label" = "작업 기록 보기";
+"DailySummary.title" = "작업 기록";
+"DailySummary.today.label" = "오늘";
+"DailySummary.yesterday.label" = "어제";
+"DailySummary.empty.today" = "오늘 완료한 토마토가 없습니다";
+"DailySummary.empty.yesterday" = "어제 완료한 토마토가 없습니다";
+"DailySummary.empty.message" = "작업 시간을 완료하면 기록이 여기에 표시됩니다.";
+"DailySummary.summary.title" = "요약";
+"DailySummary.summary.total" = "토마토 %d개 · %d분";
+"DailySummary.summary.item" = "토마토 %d개 · %d분";
+"DailySummary.timeline.title" = "타임라인";

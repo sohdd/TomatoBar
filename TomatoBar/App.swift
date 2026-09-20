@@ -28,6 +28,7 @@ struct TBApp: App {
 class TBStatusItem: NSObject, NSApplicationDelegate {
     private var popover = NSPopover()
     private var statusBarItem: NSStatusItem?
+    private var dailySummaryWindowController: TBDailySummaryWindowController?
     static var shared: TBStatusItem!
 
     func applicationDidFinishLaunching(_: Notification) {
@@ -77,6 +78,14 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
 
     func closePopover(_ sender: AnyObject?) {
         popover.performClose(sender)
+    }
+
+    func showDailySummary(store: TBWorkStore) {
+        closePopover(nil)
+        if dailySummaryWindowController == nil {
+            dailySummaryWindowController = TBDailySummaryWindowController(store: store)
+        }
+        dailySummaryWindowController?.present()
     }
 
     @objc func togglePopover(_ sender: AnyObject?) {

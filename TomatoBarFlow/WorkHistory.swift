@@ -67,6 +67,22 @@ struct TBWorkRecord: Codable, Equatable, Identifiable {
     let startDay: TBLocalDay
 }
 
+struct TBWorkContentSummary: Equatable, Identifiable {
+    var id: String { content }
+
+    let content: String
+    let tomatoCount: Int
+    let durationMinutes: Int
+}
+
+struct TBDailyWorkSummary: Equatable {
+    let records: [TBWorkRecord]
+    let contentSummaries: [TBWorkContentSummary]
+
+    var tomatoCount: Int { records.count }
+    var durationMinutes: Int { records.reduce(0) { $0 + $1.durationMinutes } }
+}
+
 struct TBWorkHistory {
     private(set) var records: [TBWorkRecord]
 
@@ -109,5 +125,32 @@ struct TBWorkHistory {
             }
             .prefix(limit)
             .map { $0 }
+    }
+
+    func summary(for day: TBLocalDay) -> TBDailyWorkSummary {
+        let dailyRecords = records
+            .filter { $0.startDay == day }
+            .sorted { $0.startedAt < $1.startedAt }
+        let groupedRecords = Dictionary(grouping: dailyRecords, by: \.content)
+        let contentSummaries = groupedRecords.map { content, records in
+            TBWorkContentSummary(
+                content: content,
+                tomatoCount: records.count,
+                durationMinutes: records.reduce(0) { $0 + $1.durationMinutes }
+            )
+        }.sorted {
+            if $0.tomatoCount != $1.tomatoCount {
+                return $0.tomatoCount > $1.tomatoCount
+            }
+            if $0.durationMinutes != $1.durationMinutes {
+                return $0.durationMinutes > $1.durationMinutes
+            }
+            return $0.content < $1.content
+        }
+
+        return TBDailyWorkSummary(
+            records: dailyRecords,
+            contentSummaries: contentSummaries
+        )
     }
 }

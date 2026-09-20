@@ -119,6 +119,13 @@ private struct WorkView: View {
                 .frame(maxHeight: 92)
             }
 
+            Button {
+                TBStatusItem.shared.showDailySummary(store: store)
+            } label: {
+                Text(NSLocalizedString("WorkView.history.label", comment: "Open work history button"))
+                    .frame(maxWidth: .infinity)
+            }
+
             Spacer().frame(minHeight: 0)
         }
         .padding(4)
