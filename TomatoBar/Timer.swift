@@ -163,8 +163,6 @@ class TBTimer: ObservableObject {
 
     private func onNotificationAction(action: TBNotification.Action) {
         switch action {
-        case .startBreak where state.isWaitingForBreak:
-            startBreak()
         case .skipBreak where state.isBreakRelated:
             skipBreak()
         default:
@@ -180,6 +178,10 @@ class TBTimer: ObservableObject {
         }
 
         state = transition.to
+
+        if transition.from.isWaitingForBreak {
+            TBStatusItem.shared.dismissBreakPrompt()
+        }
 
         if transition.from == .working {
             if transition.event == .workFinished {
@@ -251,10 +253,10 @@ class TBTimer: ObservableObject {
 
     private func onWaitingForBreak(_ breakKind: TBBreakKind) {
         let presentation = breakPresentation(for: breakKind)
-        notificationCenter.send(
-            title: NSLocalizedString("TBTimer.onRestStart.title", comment: "Time's up title"),
-            body: presentation.body,
-            category: .breakReady
+        TBStatusItem.shared.showBreakPrompt(
+            message: presentation.body,
+            startBreak: { [weak self] in self?.startBreak() },
+            skipBreak: { [weak self] in self?.skipBreak() }
         )
         TBStatusItem.shared.setIcon(name: presentation.icon)
     }

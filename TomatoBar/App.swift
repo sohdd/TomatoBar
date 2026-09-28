@@ -29,6 +29,7 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
     private var popover = NSPopover()
     private var statusBarItem: NSStatusItem?
     private var dailySummaryWindowController: TBDailySummaryWindowController?
+    private var breakPrompt: NSPanel?
     static var shared: TBStatusItem!
 
     func applicationDidFinishLaunching(_: Notification) {
@@ -80,6 +81,45 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
         popover.performClose(sender)
     }
 
+    func showBreakPrompt(message: String, startBreak: @escaping () -> Void, skipBreak: @escaping () -> Void) {
+        dismissBreakPrompt()
+
+        let panelSize = NSSize(width: 360, height: 150)
+        let panel = NSPanel(
+            contentRect: NSRect(origin: .zero, size: panelSize),
+            styleMask: [.titled, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        panel.title = NSLocalizedString("TBTimer.onRestStart.title", comment: "Time's up title")
+        panel.level = .floating
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        panel.hidesOnDeactivate = false
+        panel.isMovable = false
+        panel.isReleasedWhenClosed = false
+        panel.contentViewController = NSHostingController(rootView: TBBreakPromptView(
+            message: message,
+            startBreak: startBreak,
+            skipBreak: skipBreak
+        ))
+
+        if let screen = NSScreen.main ?? NSScreen.screens.first {
+            let visibleFrame = screen.visibleFrame
+            panel.setFrameOrigin(NSPoint(
+                x: visibleFrame.maxX - panelSize.width - 16,
+                y: visibleFrame.maxY - panelSize.height - 16
+            ))
+        }
+
+        breakPrompt = panel
+        panel.orderFrontRegardless()
+    }
+
+    func dismissBreakPrompt() {
+        breakPrompt?.orderOut(nil)
+        breakPrompt = nil
+    }
+
     func showDailySummary(store: TBWorkStore) {
         closePopover(nil)
         if dailySummaryWindowController == nil {
@@ -94,5 +134,27 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
         } else {
             showPopover(sender)
         }
+    }
+}
+
+private struct TBBreakPromptView: View {
+    let message: String
+    let startBreak: () -> Void
+    let skipBreak: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(message)
+                .font(.body)
+            Spacer(minLength: 0)
+            HStack {
+                Spacer()
+                Button(NSLocalizedString("TBTimer.skipBreak.label", comment: "Skip break"), action: skipBreak)
+                Button(NSLocalizedString("TBTimer.startBreak.label", comment: "Start break"), action: startBreak)
+                    .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding(20)
+        .frame(width: 360, height: 122)
     }
 }

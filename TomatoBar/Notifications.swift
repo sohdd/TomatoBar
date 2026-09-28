@@ -2,11 +2,11 @@ import UserNotifications
 
 enum TBNotification {
     enum Category: String {
-        case breakReady, breakStarted, breakFinished
+        case breakStarted, breakFinished
     }
 
     enum Action: String {
-        case startBreak, skipBreak
+        case skipBreak
     }
 }
 
@@ -29,20 +29,10 @@ class TBNotificationCenter: NSObject, UNUserNotificationCenterDelegate {
 
         center.delegate = self
 
-        let actionStartBreak = UNNotificationAction(
-            identifier: TBNotification.Action.startBreak.rawValue,
-            title: NSLocalizedString("TBTimer.startBreak.label", comment: "Start break"),
-            options: []
-        )
         let actionSkipBreak = UNNotificationAction(
             identifier: TBNotification.Action.skipBreak.rawValue,
             title: NSLocalizedString("TBTimer.skipBreak.label", comment: "Skip break"),
             options: []
-        )
-        let breakReadyCategory = UNNotificationCategory(
-            identifier: TBNotification.Category.breakReady.rawValue,
-            actions: [actionStartBreak, actionSkipBreak],
-            intentIdentifiers: []
         )
         let breakStartedCategory = UNNotificationCategory(
             identifier: TBNotification.Category.breakStarted.rawValue,
@@ -56,7 +46,6 @@ class TBNotificationCenter: NSObject, UNUserNotificationCenterDelegate {
         )
 
         center.setNotificationCategories([
-            breakReadyCategory,
             breakStartedCategory,
             breakFinishedCategory,
         ])
