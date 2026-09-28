@@ -29,7 +29,7 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
     private var popover = NSPopover()
     private var statusBarItem: NSStatusItem?
     private var dailySummaryWindowController: TBDailySummaryWindowController?
-    private var breakPrompt: NSPanel?
+    private var breakPrompt = NSPopover()
     static var shared: TBStatusItem!
 
     func applicationDidFinishLaunching(_: Notification) {
@@ -82,42 +82,27 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
     }
 
     func showBreakPrompt(message: String, startBreak: @escaping () -> Void, skipBreak: @escaping () -> Void) {
+        guard let button = statusBarItem?.button else { return }
+        closePopover(nil)
         dismissBreakPrompt()
 
-        let panelSize = NSSize(width: 360, height: 150)
-        let panel = NSPanel(
-            contentRect: NSRect(origin: .zero, size: panelSize),
-            styleMask: [.titled, .nonactivatingPanel],
-            backing: .buffered,
-            defer: false
-        )
-        panel.title = NSLocalizedString("TBTimer.onRestStart.title", comment: "Time's up title")
-        panel.level = .floating
-        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        panel.hidesOnDeactivate = false
-        panel.isMovable = false
-        panel.isReleasedWhenClosed = false
-        panel.contentViewController = NSHostingController(rootView: TBBreakPromptView(
+        breakPrompt.behavior = .applicationDefined
+        let contentViewController = NSHostingController(rootView: TBBreakPromptView(
             message: message,
             startBreak: startBreak,
             skipBreak: skipBreak
         ))
-
-        if let screen = NSScreen.main ?? NSScreen.screens.first {
-            let visibleFrame = screen.visibleFrame
-            panel.setFrameOrigin(NSPoint(
-                x: visibleFrame.maxX - panelSize.width - 16,
-                y: visibleFrame.maxY - panelSize.height - 16
-            ))
-        }
-
-        breakPrompt = panel
-        panel.orderFrontRegardless()
+        breakPrompt.contentViewController = contentViewController
+        breakPrompt.contentSize = NSSize(
+            width: 240,
+            height: contentViewController.view.intrinsicContentSize.height
+        )
+        breakPrompt.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        breakPrompt.contentViewController?.view.window?.makeKey()
     }
 
     func dismissBreakPrompt() {
-        breakPrompt?.orderOut(nil)
-        breakPrompt = nil
+        breakPrompt.performClose(nil)
     }
 
     func showDailySummary(store: TBWorkStore) {
@@ -129,7 +114,9 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
     }
 
     @objc func togglePopover(_ sender: AnyObject?) {
-        if popover.isShown {
+        if breakPrompt.isShown {
+            breakPrompt.contentViewController?.view.window?.makeKey()
+        } else if popover.isShown {
             closePopover(sender)
         } else {
             showPopover(sender)
@@ -143,18 +130,25 @@ private struct TBBreakPromptView: View {
     let skipBreak: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(NSLocalizedString("TBTimer.onRestStart.title", comment: "Time's up title"))
+                .font(.headline)
             Text(message)
-                .font(.body)
-            Spacer(minLength: 0)
-            HStack {
-                Spacer()
-                Button(NSLocalizedString("TBTimer.skipBreak.label", comment: "Skip break"), action: skipBreak)
-                Button(NSLocalizedString("TBTimer.startBreak.label", comment: "Start break"), action: startBreak)
-                    .keyboardShortcut(.defaultAction)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            HStack(spacing: 8) {
+                TBTimerButton(
+                    label: NSLocalizedString("TBTimer.startBreak.label", comment: "Start break"),
+                    action: startBreak
+                )
+                .keyboardShortcut(.defaultAction)
+                TBTimerButton(
+                    label: NSLocalizedString("TBTimer.skipBreak.label", comment: "Skip break"),
+                    action: skipBreak
+                )
             }
         }
-        .padding(20)
-        .frame(width: 360, height: 122)
+        .padding(12)
+        .frame(width: 240)
     }
 }

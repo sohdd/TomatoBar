@@ -153,6 +153,26 @@ private enum ChildView {
     case intervals, work, settings, sounds
 }
 
+struct TBTimerButton: View {
+    let label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                /*
+                  When appearance is set to "Dark" and accent color is set to "Graphite"
+                  "defaultAction" button label's color is set to the same color as the
+                  button, making the button look blank. #24
+                 */
+                .foregroundColor(Color.white)
+                .font(.system(.body).monospacedDigit())
+                .frame(maxWidth: .infinity)
+        }
+        .controlSize(.large)
+    }
+}
+
 struct TBPopoverView: View {
     @ObservedObject var timer = TBTimer()
     @State private var buttonHovered = false
@@ -269,21 +289,10 @@ struct TBPopoverView: View {
     }
 
     private func timerButton(label: String, action: @escaping () -> Void) -> some View {
-        Button {
+        TBTimerButton(label: label) {
             action()
             TBStatusItem.shared.closePopover(nil)
-        } label: {
-            Text(label)
-                /*
-                  When appearance is set to "Dark" and accent color is set to "Graphite"
-                  "defaultAction" button label's color is set to the same color as the
-                  button, making the button look blank. #24
-                 */
-                .foregroundColor(Color.white)
-                .font(.system(.body).monospacedDigit())
-                .frame(maxWidth: .infinity)
         }
-        .controlSize(.large)
     }
 }
 
