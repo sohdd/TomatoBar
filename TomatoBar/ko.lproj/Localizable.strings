@@ -50,3 +50,7 @@
 "DailySummary.edit.content.label" = "작업 내용";
 "DailySummary.edit.cancel.label" = "취소";
 "DailySummary.edit.save.label" = "저장";
+
+"TBTimer.onRestFinish.prompt" = "새 작업을 시작할까요?";
+"TBTimer.startWork.label" = "새 작업 시작";
+"TBTimer.later.label" = "나중에";

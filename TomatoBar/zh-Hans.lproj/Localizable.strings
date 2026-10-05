@@ -53,3 +53,7 @@
 "DailySummary.edit.content.label" = "工作内容";
 "DailySummary.edit.cancel.label" = "取消";
 "DailySummary.edit.save.label" = "保存";
+
+"TBTimer.onRestFinish.prompt" = "要开始新的任务吗？";
+"TBTimer.startWork.label" = "开始新任务";
+"TBTimer.later.label" = "稍后";

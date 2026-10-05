@@ -179,8 +179,8 @@ class TBTimer: ObservableObject {
 
         state = transition.to
 
-        if transition.from.isWaitingForBreak {
-            TBStatusItem.shared.dismissBreakPrompt()
+        if transition.from.isWaitingForBreak || transition.from == .waitingForWork {
+            TBStatusItem.shared.dismissCompletionPrompt()
         }
 
         if transition.from == .working {
@@ -275,6 +275,8 @@ class TBTimer: ObservableObject {
     }
 
     private func onBreakFinish() {
+        player.playDing()
+        TBStatusItem.shared.showWorkPrompt(startWork: { [weak self] in self?.transition(.startWork) })
         notificationCenter.send(
             title: NSLocalizedString("TBTimer.onRestFinish.title", comment: "Break is over title"),
             body: NSLocalizedString("TBTimer.onRestFinish.body", comment: "Break is over body"),

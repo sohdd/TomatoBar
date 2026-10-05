@@ -29,7 +29,7 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
     private var popover = NSPopover()
     private var statusBarItem: NSStatusItem?
     private var dailySummaryWindowController: TBDailySummaryWindowController?
-    private var breakPrompt = NSPopover()
+    private var completionPrompt = NSPopover()
     static var shared: TBStatusItem!
 
     func applicationDidFinishLaunching(_: Notification) {
@@ -82,27 +82,54 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
     }
 
     func showBreakPrompt(message: String, startBreak: @escaping () -> Void, skipBreak: @escaping () -> Void) {
+        showCompletionPrompt(
+            title: NSLocalizedString("TBTimer.onRestStart.title", comment: "Time's up title"),
+            message: message,
+            primaryLabel: NSLocalizedString("TBTimer.startBreak.label", comment: "Start break"),
+            secondaryLabel: NSLocalizedString("TBTimer.skipBreak.label", comment: "Skip break"),
+            primaryAction: startBreak,
+            secondaryAction: skipBreak
+        )
+    }
+
+    func showWorkPrompt(startWork: @escaping () -> Void) {
+        showCompletionPrompt(
+            title: NSLocalizedString("TBTimer.onRestFinish.title", comment: "Break is over title"),
+            message: NSLocalizedString("TBTimer.onRestFinish.prompt", comment: "Start new work prompt"),
+            primaryLabel: NSLocalizedString("TBTimer.startWork.label", comment: "Start new work"),
+            secondaryLabel: NSLocalizedString("TBTimer.later.label", comment: "Start later"),
+            primaryAction: startWork,
+            secondaryAction: { [weak self] in self?.dismissCompletionPrompt() }
+        )
+    }
+
+    private func showCompletionPrompt(title: String, message: String,
+                                      primaryLabel: String, secondaryLabel: String,
+                                      primaryAction: @escaping () -> Void, secondaryAction: @escaping () -> Void) {
         guard let button = statusBarItem?.button else { return }
         closePopover(nil)
-        dismissBreakPrompt()
+        dismissCompletionPrompt()
 
-        breakPrompt.behavior = .applicationDefined
-        let contentViewController = NSHostingController(rootView: TBBreakPromptView(
+        completionPrompt.behavior = .applicationDefined
+        let contentViewController = NSHostingController(rootView: TBCompletionPromptView(
+            title: title,
             message: message,
-            startBreak: startBreak,
-            skipBreak: skipBreak
+            primaryLabel: primaryLabel,
+            secondaryLabel: secondaryLabel,
+            primaryAction: primaryAction,
+            secondaryAction: secondaryAction
         ))
-        breakPrompt.contentViewController = contentViewController
-        breakPrompt.contentSize = NSSize(
+        completionPrompt.contentViewController = contentViewController
+        completionPrompt.contentSize = NSSize(
             width: 240,
             height: contentViewController.view.intrinsicContentSize.height
         )
-        breakPrompt.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-        breakPrompt.contentViewController?.view.window?.makeKey()
+        completionPrompt.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        completionPrompt.contentViewController?.view.window?.makeKey()
     }
 
-    func dismissBreakPrompt() {
-        breakPrompt.performClose(nil)
+    func dismissCompletionPrompt() {
+        completionPrompt.performClose(nil)
     }
 
     func showDailySummary(store: TBWorkStore) {
@@ -114,8 +141,8 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
     }
 
     @objc func togglePopover(_ sender: AnyObject?) {
-        if breakPrompt.isShown {
-            breakPrompt.contentViewController?.view.window?.makeKey()
+        if completionPrompt.isShown {
+            completionPrompt.contentViewController?.view.window?.makeKey()
         } else if popover.isShown {
             closePopover(sender)
         } else {
@@ -124,27 +151,30 @@ class TBStatusItem: NSObject, NSApplicationDelegate {
     }
 }
 
-private struct TBBreakPromptView: View {
+private struct TBCompletionPromptView: View {
+    let title: String
     let message: String
-    let startBreak: () -> Void
-    let skipBreak: () -> Void
+    let primaryLabel: String
+    let secondaryLabel: String
+    let primaryAction: () -> Void
+    let secondaryAction: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(NSLocalizedString("TBTimer.onRestStart.title", comment: "Time's up title"))
+            Text(title)
                 .font(.headline)
             Text(message)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             HStack(spacing: 8) {
                 TBTimerButton(
-                    label: NSLocalizedString("TBTimer.startBreak.label", comment: "Start break"),
-                    action: startBreak
+                    label: primaryLabel,
+                    action: primaryAction
                 )
                 .keyboardShortcut(.defaultAction)
                 TBTimerButton(
-                    label: NSLocalizedString("TBTimer.skipBreak.label", comment: "Skip break"),
-                    action: skipBreak
+                    label: secondaryLabel,
+                    action: secondaryAction
                 )
             }
         }

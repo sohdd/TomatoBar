@@ -53,3 +53,7 @@
 "DailySummary.edit.content.label" = "Work content";
 "DailySummary.edit.cancel.label" = "Cancel";
 "DailySummary.edit.save.label" = "Save";
+
+"TBTimer.onRestFinish.prompt" = "Would you like to start a new task?";
+"TBTimer.startWork.label" = "Start new task";
+"TBTimer.later.label" = "Later";
